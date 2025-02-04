@@ -1,7 +1,7 @@
 # Ben Kabongo
 # Feb 2025
 
-# Cycle Absa: T5 Fine-tuning
+# Cycle Absa
 
 import argparse
 import os
@@ -15,7 +15,7 @@ from tqdm import tqdm
 
 from annotations_text import AnnotationsTextFormerBase
 from data import T5ABSADataset, collate_fn, get_train_val_test_df
-from enums import TaskType, AbsaTupleType, AnnotationsTextFormerType, PrompterType
+from enums import TaskType, AbsaTupleType, AnnotationsTextFormerType
 from eval import get_evaluation_scores
 from prompts import Prompter
 from utils import set_seed, update_infos, create_res_df_from_dict
@@ -653,35 +653,23 @@ def main(args):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     args.device = device
 
+    os.makedirs(args.exp_dir, exist_ok=True)
+    args.log_file_path = os.path.join(args.exp_dir, "log.txt")
+    args.res_t2a_file_path = os.path.join(args.exp_dir, "res_t2a.csv")
+    args.res_a2t_file_path = os.path.join(args.exp_dir, "res_a2t.csv")
+
+    args.save_t2a_model_path = os.path.join(args.exp_dir, "t2a_model.pth")
+    args.save_a2t_model_path = os.path.join(args.exp_dir, "a2t_model.pth")
+
     t2a_model = T5ForConditionalGeneration.from_pretrained(args.model_name_or_path)
     t2a_model.to(args.device)
-    if args.save_t2a_model_path != "":
+    if args.load_model:
         load_model(t2a_model, args.save_t2a_model_path)
     
     a2t_model = T5ForConditionalGeneration.from_pretrained(args.model_name_or_path)
     a2t_model.to(args.device)
-    if args.save_a2t_model_path != "":
+    if args.load_model:
         load_model(a2t_model, args.save_a2t_model_path)
-    
-    if args.exp_name == "":
-        args.exp_name = (
-            f"cycle_{args.model_name_or_path}_{args.absa_tuple.value}_"
-            f"{args.annotations_text_type.value}_{args.time_id}"
-        )
-    
-    args.exp_name = args.exp_name.replace(" ", "_").replace("/", "_")
-    exps_base_dir = os.path.join(args.dataset_dir, "exps")
-    exp_dir = os.path.join(exps_base_dir, args.exp_name)
-    os.makedirs(exp_dir, exist_ok=True)
-    args.exp_dir = exp_dir
-    args.log_file_path = os.path.join(exp_dir, "log.txt")
-    args.res_t2a_file_path = os.path.join(exp_dir, "res_t2a.csv")
-    args.res_a2t_file_path = os.path.join(exp_dir, "res_a2t.csv")
-
-    if args.save_t2a_model_path == "":
-        args.save_t2a_model_path = os.path.join(exp_dir, "t2a_model.pth")
-    if args.save_a2t_model_path == "":
-        args.save_a2t_model_path = os.path.join(exp_dir, "a2t_model.pth")
 
     if args.verbose:
         batch = next(iter(test_t2a_dataloader))
@@ -699,7 +687,7 @@ def main(args):
             f"Tokenizer: {args.tokenizer_name_or_path}\n" +
             f"Tuple: {args.absa_tuple}\n" +
             f"Annotations: {args.annotations_text_type}\n" +
-            f"Dataset: {args.dataset_name}\n" +
+            f"Dataset: {args.dataset_paths}\n" +
             f"Device: {device}\n" +
             f"Arguments:\n{args}\n\n" +
             f"Data:\n{test_df.head(5)}\n\n" +
@@ -763,16 +751,18 @@ if __name__ == "__main__":
     )
 
     parser.add_argument("--dataset_path", type=str, default="")
+    parser.add_argument("--exp_dir", type=str, default="")
     parser.add_argument("--train_size", type=float, default=0.8)
     parser.add_argument("--train_labeled_size", type=float, default=0.2)
     parser.add_argument("--val_size", type=float, default=0.1)
     parser.add_argument("--test_size", type=float, default=0.1)
+    parser.add_argument("--load_model", action=argparse.BooleanOptionalAction)
+    parser.set_defaults(load_model=False)
 
     parser.add_argument("--lang", type=str, default="en")
     parser.add_argument("--verbose", action=argparse.BooleanOptionalAction)
     parser.set_defaults(verbose=True)
     parser.add_argument("--verbose_every", type=int, default=1)
-    parser.add_argument("--exp_name", type=str, default="")
     parser.add_argument("--random_state", type=int, default=42)
 
     parser.add_argument("--n_labeled_epochs", type=int, default=10)

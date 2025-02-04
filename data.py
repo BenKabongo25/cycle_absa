@@ -176,7 +176,7 @@ def get_train_val_test_df(args: Any) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Dat
     )
     val_df, test_df = train_test_split(
         val_test_df, 
-        test_size=args.test_df / (args.test_size + args.val_size), 
+        test_size=args.test_size / (args.test_size + args.val_size), 
         random_state=args.random_state
     )
     return train_df, val_df, test_df

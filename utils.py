@@ -171,7 +171,6 @@ def preprocess_text(text: str, args: Any, max_length: int=-1) -> str:
     if args.delete_punctuation_flag: text = delete_punctuation(text)
     if args.delete_stopwords_flag: text = delete_stopwords(text)
     if args.delete_non_ascii_flag: text = delete_non_ascii(text)
-    if args.delete_digit_flag: text = delete_digit(text)
     if args.first_line_flag: text = first_line(text)
     if args.last_line_flag: text = last_line(text)
     if args.stem_flag: text = stem(text)
