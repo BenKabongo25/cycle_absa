@@ -3,13 +3,6 @@
 
 # Absa: Full supervised
 
-import argparse
-import os
-import torch
-
-from torch.utils.data import DataLoader
-from transformers import T5Tokenizer, T5ForConditionalGeneration
-
 from cycle_absa import *
 
 
@@ -63,7 +56,9 @@ def main(args):
     tokenizer = T5Tokenizer.from_pretrained(args.tokenizer_name_or_path)
 
     if args.train_flag:
-        train_df, val_df, test_df = get_train_val_test_df(args)
+        train_df = pd.read_csv(args.train_path)
+        val_df = pd.read_csv(args.eval_path)
+        test_df = pd.read_csv(args.test_path)
 
         train_dataset = T5ABSADataset(
             tokenizer, annotations_text_former, prompter, train_df, args, task_type=args.task_type,
@@ -71,7 +66,8 @@ def main(args):
         )
         train_dataloader = DataLoader(
             train_dataset, 
-            batch_size=args.batch_size, shuffle=True, collate_fn=collate_fn
+            batch_size=args.batch_size, shuffle=True, collate_fn=collate_fn,
+            pin_memory=True, num_workers=4
         )
         
         val_dataset = T5ABSADataset(
@@ -80,7 +76,8 @@ def main(args):
         )
         val_dataloader = DataLoader(
             val_dataset, 
-            batch_size=args.batch_size, shuffle=False, collate_fn=collate_fn
+            batch_size=args.batch_size, shuffle=False, collate_fn=collate_fn,
+            pin_memory=True, num_workers=4
         )
 
         test_dataset = T5ABSADataset(
@@ -89,7 +86,8 @@ def main(args):
         )
         test_dataloader = DataLoader(
             test_dataset, 
-            batch_size=args.batch_size, shuffle=False, collate_fn=collate_fn
+            batch_size=args.batch_size, shuffle=False, collate_fn=collate_fn,
+            pin_memory=True, num_workers=4
         )
 
     else:
@@ -100,7 +98,8 @@ def main(args):
         )
         test_dataloader = DataLoader(
             test_dataset, 
-            batch_size=args.batch_size, shuffle=False, collate_fn=collate_fn
+            batch_size=args.batch_size, shuffle=False, collate_fn=collate_fn,
+            pin_memory=True, num_workers=4
         )
 
         if args.eval_res_file_path == "":
@@ -145,7 +144,7 @@ def main(args):
             f"Tokenizer: {args.tokenizer_name_or_path}\n" +
             f"Tuple: {args.absa_tuple}\n" +
             f"Annotations: {args.annotations_text_type}\n" +
-            f"Dataset: {args.dataset_path}\n" +
+            f"Dataset: {args.train_path}\n" +
             f"Device: {device}\n" +
             f"Arguments:\n{args}\n\n" +
             f"Data:\n{test_df.head(5)}\n\n" +
@@ -198,7 +197,9 @@ if __name__ == "__main__":
     parser.add_argument("--annotation_flag", action=argparse.BooleanOptionalAction)
     parser.set_defaults(annotation_flag=True)
 
-    parser.add_argument("--dataset_path", type=str, default="")
+    parser.add_argument("--train_path", type=str, default="")
+    parser.add_argument("--eval_path", type=str, default="")
+    parser.add_argument("--test_path", type=str, default="")
     parser.add_argument("--exp_dir", type=str, default="")
     parser.add_argument("--train_dataset_path", type=str, default="")
     parser.add_argument("--val_dataset_path", type=str, default="")

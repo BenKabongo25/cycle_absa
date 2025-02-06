@@ -42,46 +42,51 @@ def evaluate(model, tokenizer, annotations_text_former, dataloader, task_type, a
     all_annotations = []
 
     model.eval()
-    for batch_idx, batch in tqdm(enumerate(dataloader), "Eval", colour="cyan", total=len(dataloader)):
-        empty_cache()
-        
-        input_ids = batch["input_ids"].to(args.device)
-        attention_mask = batch["attention_mask"].to(args.device)
-        
-        outputs = model.generate(
-            input_ids=input_ids, attention_mask=attention_mask, do_sample=False, 
-            max_length=args.max_target_length
-        )
-        output_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
-        input_texts = batch["input_texts"]
-        target_texts = batch["target_texts"]
-        refs = batch["references"]
-        annotations = batch["annotations"]
+    with torch.no_grad():
+        for batch_idx, batch in tqdm(enumerate(dataloader), "Eval", colour="cyan", total=len(dataloader)):
+            torch.cuda.empty_cache()
+            
+            input_ids = batch["input_ids"].to(args.device)
+            attention_mask = batch["attention_mask"].to(args.device)
+            
+            outputs = model.generate(
+                input_ids=input_ids, attention_mask=attention_mask, do_sample=False, 
+                max_length=args.max_target_length
+            )
+            output_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
-        references.extend(refs)
-        predictions.extend(output_texts)
-        all_inputs.extend(input_texts)
-        all_outputs.extend(output_texts)
-        all_annotations.extend(annotations)
+            input_texts = batch["input_texts"]
+            target_texts = batch["target_texts"]
+            refs = batch["references"]
+            annotations = batch["annotations"]
 
-        if batch_idx == 0 and args.verbose:
-            log = "=" * 150
-            for i in range(len(input_texts)):
-                log += f"\nInput: {input_texts[i]}"
-                log += f"\nReferences: {refs[i][: min(len(refs[i]), 3)]}"
-                log += f"\nAnnotations: {annotations[i]}"
-                log += f"\nOutput: {output_texts[i]}"
-                if task_type is TaskType.T2A:
-                    log += (
-                        f"\nOutput annotations: "
-                        f"{annotations_text_former.multiple_text_to_annotations(output_texts[i])}"
-                    )
-                log += "\n"
+            references.extend(refs)
+            predictions.extend(output_texts)
+            all_inputs.extend(input_texts)
+            all_outputs.extend(output_texts)
+            all_annotations.extend(annotations)
 
-            print("\n" + log)
-            with open(args.log_file_path, "a", encoding="utf-8") as log_file:
-                log_file.write(log)
+            if batch_idx == 0 and args.verbose:
+                log = "=" * 150
+                for i in range(len(input_texts)):
+                    log += f"\nInput: {input_texts[i]}"
+                    log += f"\nReferences: {refs[i][: min(len(refs[i]), 3)]}"
+                    log += f"\nAnnotations: {annotations[i]}"
+                    log += f"\nOutput: {output_texts[i]}"
+                    if task_type is TaskType.T2A:
+                        log += (
+                            f"\nOutput annotations: "
+                            f"{annotations_text_former.multiple_text_to_annotations(output_texts[i])}"
+                        )
+                    log += "\n"
+
+                print("\n" + log)
+                with open(args.log_file_path, "a", encoding="utf-8") as log_file:
+                    log_file.write(log)
+
+            del input_ids, attention_mask, outputs, input_texts, target_texts, refs, annotations
+            torch.cuda.empty_cache()
 
     if args.annotation_flag:
         scores = get_evaluation_scores(
@@ -120,7 +125,7 @@ def train(model, optimizer, dataloader, args):
     model.train()
 
     for batch_idx, batch in tqdm(enumerate(dataloader), "Training", colour="cyan", total=len(dataloader)):
-        empty_cache()
+        torch.cuda.empty_cache()
         
         input_ids = batch["input_ids"].to(args.device)
         attention_mask = batch["attention_mask"].to(args.device)
@@ -134,6 +139,9 @@ def train(model, optimizer, dataloader, args):
         optimizer.step()
 
         running_loss += loss.item()
+
+        del input_ids, attention_mask, labels, outputs
+        torch.cuda.empty_cache()
 
     running_loss /= len(dataloader)
     return {"loss": running_loss}
@@ -319,7 +327,8 @@ def create_labeled_dataloader(model, tokenizer, annotations_text_former, dataloa
     )
     dataloader = DataLoader(
         dataset,
-        batch_size=args.batch_size, shuffle=True, collate_fn=collate_fn
+        batch_size=args.batch_size, shuffle=True, collate_fn=collate_fn,
+        pin_memory=True, num_workers=4
     )
 
     return dataloader
@@ -565,7 +574,10 @@ def main(args):
     annotations_text_former = AnnotationsTextFormerBase.get_annotations_text_former(args)
     prompter = Prompter(args)
     tokenizer = T5Tokenizer.from_pretrained(args.tokenizer_name_or_path)
-    train_df, val_df, test_df = get_train_val_test_df(args)
+    
+    train_df = pd.read_csv(args.train_path)
+    val_df = pd.read_csv(args.eval_path)
+    test_df = pd.read_csv(args.test_path)
 
     train_t2a_labeled_dataloader = None
     train_a2t_labeled_dataloader = None
@@ -587,11 +599,13 @@ def main(args):
         )
         train_t2a_labeled_dataloader = DataLoader(
             train_t2a_labeled_dataset, 
-            batch_size=args.batch_size, shuffle=True, collate_fn=collate_fn
+            batch_size=args.batch_size, shuffle=True, collate_fn=collate_fn,
+            pin_memory=True, num_workers=4
         )
         train_a2t_labeled_dataloader = DataLoader(
             train_a2t_labeled_dataset, 
-            batch_size=args.batch_size, shuffle=True, collate_fn=collate_fn
+            batch_size=args.batch_size, shuffle=True, collate_fn=collate_fn,
+            pin_memory=True, num_workers=4
         )
 
     else:
@@ -607,11 +621,13 @@ def main(args):
     )
     train_t2a_unlabeled_dataloader = DataLoader(
         train_t2a_unlabeled_dataset, 
-        batch_size=args.batch_size, shuffle=True, collate_fn=collate_fn
+        batch_size=args.batch_size, shuffle=True, collate_fn=collate_fn,
+        pin_memory=True, num_workers=4
     )
     train_a2t_unlabeled_dataloader = DataLoader(
         train_a2t_unlabeled_dataset, 
-        batch_size=args.batch_size, shuffle=True, collate_fn=collate_fn
+        batch_size=args.batch_size, shuffle=True, collate_fn=collate_fn,
+        pin_memory=True, num_workers=4
     )
     
     val_t2a_dataset = T5ABSADataset(
@@ -624,11 +640,13 @@ def main(args):
     )
     val_t2a_dataloader = DataLoader(
         val_t2a_dataset, 
-        batch_size=args.batch_size, shuffle=False, collate_fn=collate_fn
+        batch_size=args.batch_size, shuffle=False, collate_fn=collate_fn,
+        pin_memory=True, num_workers=4
     )
     val_a2t_dataloader = DataLoader(
         val_a2t_dataset, 
-        batch_size=args.batch_size, shuffle=False, collate_fn=collate_fn
+        batch_size=args.batch_size, shuffle=False, collate_fn=collate_fn,
+        pin_memory=True, num_workers=4
     )
 
     test_t2a_dataset = T5ABSADataset(
@@ -641,11 +659,13 @@ def main(args):
     )
     test_t2a_dataloader = DataLoader(
         test_t2a_dataset, 
-        batch_size=args.batch_size, shuffle=False, collate_fn=collate_fn
+        batch_size=args.batch_size, shuffle=False, collate_fn=collate_fn,
+        pin_memory=True, num_workers=4
     )
     test_a2t_dataloader = DataLoader(
         test_a2t_dataset, 
-        batch_size=args.batch_size, shuffle=False, collate_fn=collate_fn
+        batch_size=args.batch_size, shuffle=False, collate_fn=collate_fn,
+        pin_memory=True, num_workers=4
     )
 
     args.annotations_raw_format = args.absa_tuple.value
@@ -657,6 +677,7 @@ def main(args):
     args.log_file_path = os.path.join(args.exp_dir, "log.txt")
     args.res_t2a_file_path = os.path.join(args.exp_dir, "res_t2a.csv")
     args.res_a2t_file_path = os.path.join(args.exp_dir, "res_a2t.csv")
+    args.eval_res_file_path = os.path.join(args.exp_dir, "eval_res.csv")
 
     args.save_t2a_model_path = os.path.join(args.exp_dir, "t2a_model.pth")
     args.save_a2t_model_path = os.path.join(args.exp_dir, "a2t_model.pth")
@@ -687,7 +708,7 @@ def main(args):
             f"Tokenizer: {args.tokenizer_name_or_path}\n" +
             f"Tuple: {args.absa_tuple}\n" +
             f"Annotations: {args.annotations_text_type}\n" +
-            f"Dataset: {args.dataset_paths}\n" +
+            f"Dataset: {args.train_path}\n" +
             f"Device: {device}\n" +
             f"Arguments:\n{args}\n\n" +
             f"Data:\n{test_df.head(5)}\n\n" +
@@ -749,8 +770,12 @@ if __name__ == "__main__":
     parser.add_argument("--annotations_raw_format", type=str, default="acpo",
         help="a: aspect term, c: aspect category, p: sentiment polarity, o: opinion term"
     )
+    parser.add_argument("--annotation_flag", action=argparse.BooleanOptionalAction)
+    parser.set_defaults(annotation_flag=True)
 
-    parser.add_argument("--dataset_path", type=str, default="")
+    parser.add_argument("--train_path", type=str, default="")
+    parser.add_argument("--eval_path", type=str, default="")
+    parser.add_argument("--test_path", type=str, default="")
     parser.add_argument("--exp_dir", type=str, default="")
     parser.add_argument("--train_size", type=float, default=0.8)
     parser.add_argument("--train_labeled_size", type=float, default=0.2)
@@ -766,11 +791,13 @@ if __name__ == "__main__":
     parser.add_argument("--random_state", type=int, default=42)
 
     parser.add_argument("--n_labeled_epochs", type=int, default=10)
-    parser.add_argument("--n_unlabeled_epochs", type=int, default=10)
+    parser.add_argument("--n_unlabeled_epochs", type=int, default=40)
     parser.add_argument("--batch_size", type=int, default=16)
     parser.add_argument("--lr", type=float, default=0.001)
     parser.add_argument("--save_t2a_model_path", type=str, default="")
     parser.add_argument("--save_a2t_model_path", type=str, default="")
+    parser.add_argument("--save_eval_results", action=argparse.BooleanOptionalAction)
+    parser.set_defaults(save_eval_results=True)
 
     parser.add_argument("--lower_flag", action=argparse.BooleanOptionalAction)
     parser.set_defaults(lower_flag=True)

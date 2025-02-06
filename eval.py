@@ -50,8 +50,8 @@ def aspect_evaluation(
     N_true = 0
 
     for i in range(len(predictions)):
-        pred = set(predictions[i])
-        true = set(references[i])
+        pred = set(tuple(sublist) for sublist in predictions[i])
+        true = set(tuple(sublist) for sublist in references[i])
 
         TP += len(pred.intersection(true))
         N_pred += len(pred)
