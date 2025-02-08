@@ -10,10 +10,10 @@ python3 full_supervised.py \
     --annotations_column annotations \
     --annotations_raw_format acpo \
     --annotation_flag \
-    --train_path /home/b.kabongo/datasets/Restaurant/train.csv \
-    --eval_path /home/b.kabongo/datasets/Restaurant/eval.csv \
-    --test_path /home/b.kabongo/datasets/Restaurant/test.csv \
-    --exp_dir /home/b.kabongo/exps/cycle_absa/Restaurant/full_supervised_a2t_acop/t5_base \
+    --train_path /home/b.kabongo/datasets/Laptop/train.csv \
+    --eval_path /home/b.kabongo/datasets/Laptop/eval.csv \
+    --test_path /home/b.kabongo/datasets/Laptop/test.csv \
+    --exp_dir /home/b.kabongo/exps/cycle_absa/Laptop/full_supervised_a2t_acop/t5_base \
     --train_size 0.8 \
     --val_size 0.1 \
     --test_size 0.1 \
@@ -22,7 +22,7 @@ python3 full_supervised.py \
     --verbose_every 1 \
     --random_state 42 \
     --n_epochs 50 \
-    --batch_size 8 \
+    --batch_size 4 \
     --lr 0.001 \
     --save_every 1 \
     --train_flag \
@@ -40,10 +40,10 @@ python3 full_supervised.py \
     --annotations_column annotations \
     --annotations_raw_format acpo \
     --annotation_flag \
-    --train_path /home/b.kabongo/datasets/Restaurant/train.csv \
-    --eval_path /home/b.kabongo/datasets/Restaurant/eval.csv \
-    --test_path /home/b.kabongo/datasets/Restaurant/test.csv \
-    --exp_dir /home/b.kabongo/exps/cycle_absa/Restaurant/full_supervised_a2t_aco/t5_base \
+    --train_path /home/b.kabongo/datasets/Laptop/train.csv \
+    --eval_path /home/b.kabongo/datasets/Laptop/eval.csv \
+    --test_path /home/b.kabongo/datasets/Laptop/test.csv \
+    --exp_dir /home/b.kabongo/exps/cycle_absa/Laptop/full_supervised_a2t_aco/t5_base \
     --train_size 0.8 \
     --val_size 0.1 \
     --test_size 0.1 \
@@ -52,7 +52,7 @@ python3 full_supervised.py \
     --verbose_every 1 \
     --random_state 42 \
     --n_epochs 50 \
-    --batch_size 8 \
+    --batch_size 4 \
     --lr 0.001 \
     --save_every 1 \
     --train_flag \
@@ -70,10 +70,10 @@ python3 full_supervised.py \
     --annotations_column annotations \
     --annotations_raw_format acpo \
     --annotation_flag \
-    --train_path /home/b.kabongo/datasets/Restaurant/train.csv \
-    --eval_path /home/b.kabongo/datasets/Restaurant/eval.csv \
-    --test_path /home/b.kabongo/datasets/Restaurant/test.csv \
-    --exp_dir /home/b.kabongo/exps/cycle_absa/Restaurant/full_supervised_a2t_aop/t5_base \
+    --train_path /home/b.kabongo/datasets/Laptop/train.csv \
+    --eval_path /home/b.kabongo/datasets/Laptop/eval.csv \
+    --test_path /home/b.kabongo/datasets/Laptop/test.csv \
+    --exp_dir /home/b.kabongo/exps/cycle_absa/Laptop/full_supervised_a2t_aop/t5_base \
     --train_size 0.8 \
     --val_size 0.1 \
     --test_size 0.1 \
@@ -82,7 +82,7 @@ python3 full_supervised.py \
     --verbose_every 1 \
     --random_state 42 \
     --n_epochs 50 \
-    --batch_size 8 \
+    --batch_size 4 \
     --lr 0.001 \
     --save_every 1 \
     --train_flag \
@@ -100,10 +100,10 @@ python3 full_supervised.py \
     --annotations_column annotations \
     --annotations_raw_format acpo \
     --annotation_flag \
-    --train_path /home/b.kabongo/datasets/Restaurant/train.csv \
-    --eval_path /home/b.kabongo/datasets/Restaurant/eval.csv \
-    --test_path /home/b.kabongo/datasets/Restaurant/test.csv \
-    --exp_dir /home/b.kabongo/exps/cycle_absa/Restaurant/full_supervised_a2t_ap/t5_base \
+    --train_path /home/b.kabongo/datasets/Laptop/train.csv \
+    --eval_path /home/b.kabongo/datasets/Laptop/eval.csv \
+    --test_path /home/b.kabongo/datasets/Laptop/test.csv \
+    --exp_dir /home/b.kabongo/exps/cycle_absa/Laptop/full_supervised_a2t_ap/t5_base \
     --train_size 0.8 \
     --val_size 0.1 \
     --test_size 0.1 \
@@ -112,7 +112,7 @@ python3 full_supervised.py \
     --verbose_every 1 \
     --random_state 42 \
     --n_epochs 50 \
-    --batch_size 8 \
+    --batch_size 4 \
     --lr 0.001 \
     --save_every 1 \
     --train_flag \
@@ -130,10 +130,10 @@ python3 full_supervised.py \
     --annotations_column annotations \
     --annotations_raw_format acpo \
     --annotation_flag \
-    --train_path /home/b.kabongo/datasets/Restaurant/train.csv \
-    --eval_path /home/b.kabongo/datasets/Restaurant/eval.csv \
-    --test_path /home/b.kabongo/datasets/Restaurant/test.csv \
-    --exp_dir /home/b.kabongo/exps/cycle_absa/Restaurant/full_supervised_a2t_cp/t5_base \
+    --train_path /home/b.kabongo/datasets/Laptop/train.csv \
+    --eval_path /home/b.kabongo/datasets/Laptop/eval.csv \
+    --test_path /home/b.kabongo/datasets/Laptop/test.csv \
+    --exp_dir /home/b.kabongo/exps/cycle_absa/Laptop/full_supervised_a2t_cp/t5_base \
     --train_size 0.8 \
     --val_size 0.1 \
     --test_size 0.1 \
@@ -142,7 +142,7 @@ python3 full_supervised.py \
     --verbose_every 1 \
     --random_state 42 \
     --n_epochs 50 \
-    --batch_size 8 \
+    --batch_size 4 \
     --lr 0.001 \
     --save_every 1 \
     --train_flag \
@@ -153,17 +153,17 @@ python3 full_supervised.py \
     --tokenizer_name_or_path t5-base \
     --max_input_length 32 \
     --max_target_length 32 \
-    --task_type A2T \
-    --absa_tuple ao \
+    --task_type T2A \
+    --absa_tuple acp \
     --annotations_text_type gas_extraction_style \
     --text_column text \
     --annotations_column annotations \
     --annotations_raw_format acpo \
     --annotation_flag \
-    --train_path /home/b.kabongo/datasets/Restaurant/train.csv \
-    --eval_path /home/b.kabongo/datasets/Restaurant/eval.csv \
-    --test_path /home/b.kabongo/datasets/Restaurant/test.csv \
-    --exp_dir /home/b.kabongo/exps/cycle_absa/Restaurant/full_supervised_a2t_ao/t5_base \
+    --train_path /home/b.kabongo/datasets/Laptop/train.csv \
+    --eval_path /home/b.kabongo/datasets/Laptop/eval.csv \
+    --test_path /home/b.kabongo/datasets/Laptop/test.csv \
+    --exp_dir /home/b.kabongo/exps/cycle_absa/Laptop/full_supervised_a2t_acp/t5_base \
     --train_size 0.8 \
     --val_size 0.1 \
     --test_size 0.1 \
@@ -172,7 +172,37 @@ python3 full_supervised.py \
     --verbose_every 1 \
     --random_state 42 \
     --n_epochs 50 \
-    --batch_size 8 \
+    --batch_size 4 \
+    --lr 0.001 \
+    --save_every 1 \
+    --train_flag \
+    --save_eval_results \
+    --lower_flag; \
+python3 full_supervised.py \
+    --model_name_or_path t5-base \
+    --tokenizer_name_or_path t5-base \
+    --max_input_length 32 \
+    --max_target_length 32 \
+    --task_type T2A \
+    --absa_tuple acp \
+    --annotations_text_type gas_extraction_style \
+    --text_column text \
+    --annotations_column annotations \
+    --annotations_raw_format acpo \
+    --annotation_flag \
+    --train_path /home/b.kabongo/datasets/Restaurant/train.csv \
+    --eval_path /home/b.kabongo/datasets/Restaurant/eval.csv \
+    --test_path /home/b.kabongo/datasets/Restaurant/test.csv \
+    --exp_dir /home/b.kabongo/exps/cycle_absa/Restaurant/full_supervised_a2t_acp/t5_base \
+    --train_size 0.8 \
+    --val_size 0.1 \
+    --test_size 0.1 \
+    --lang en \
+    --verbose \
+    --verbose_every 1 \
+    --random_state 42 \
+    --n_epochs 50 \
+    --batch_size 4 \
     --lr 0.001 \
     --save_every 1 \
     --train_flag \
