@@ -2,9 +2,10 @@
 
 ## Overview
 
-CycleABSA is an innovative framework for Aspect-Based Sentiment Analysis (ABSA) that leverages a cyclic training approach to improve performance under limited supervision. It introduces two complementary models:
+CycleABSA is a framework for Aspect-Based Sentiment Analysis (ABSA) that leverages a cyclic training approach to improve performance under limited supervision. It introduces two complementary models:
 - **Text-to-Aspects (T2A):** Extracts aspect tuples from text.
 - **Aspects-to-Text (A2T):** Reconstructs the original text from aspect annotations.
+
 These models are trained alternately, allowing one model to generate supervised data for the other, reducing the reliance on large annotated datasets.
 
 ## 🧩 **Problem Formulation**
@@ -12,13 +13,13 @@ These models are trained alternately, allowing one model to generate supervised 
 
 Aspect-Based Sentiment Analysis (ABSA) aims to identify and categorize sentiments expressed towards specific aspects within a text. To formalize the problem, we define the following sets:
 ### Sets
-- **Text:** $\mathcal{T} = \{T | T = (t_1, t_2, \dots, t_{|T|})\}$ represents the set of all input texts.
-- **Aspect term:** $\mathcal{A} = \{a | a = (a_1, a_2, \dots, a_{|a|})\}$ denotes the set of aspect terms.
-- **Aspect category:** $\mathcal{C} = \{c | c = (c_1, c_2, \dots, c_{|c|})\}$ represents categories under which aspects can be grouped.
-- **Opinion term:** $\mathcal{O} = \{o | o = (o_1, o_2, \dots, o_{|o|})\}$ refers to opinion expressions related to aspects.
-- **Sentiment polarity:** $\mathcal{S} = \{POS, NEG, NEUT\}$ indicates the sentiment polarity (positive, negative, neutral).
+- **Text:** $\mathcal{T} = {T | T = (t_1, t_2, \dots, t_{|T|})}$ represents the set of all input texts.
+- **Aspect term:** $\mathcal{A} = {a | a = (a_1, a_2, \dots, a_{|a|})}$ denotes the set of aspect terms.
+- **Aspect category:** $\mathcal{C} = {c | c = (c_1, c_2, \dots, c_{|c|})}$ represents categories under which aspects can be grouped.
+- **Opinion term:** $\mathcal{O} = {o | o = (o_1, o_2, \dots, o_{|o|})}$ refers to opinion expressions related to aspects.
+- **Sentiment polarity:** $\mathcal{S} = {POS, NEG, NEUT}$ indicates the sentiment polarity (positive, negative, neutral).
 - **Aspect tuple:** $\mathcal{E}$ represents task-dependent tuples combining the above elements.
-- **Aspect annotations:** $A = \{A_1, A_2, \cdots \} \in \mathcal{P}(\mathcal{E})$
+- **Aspect annotations:** $A = {A_1, A_2, \cdots } \in \mathcal{P}(\mathcal{E})$
 
 ### ABSA Tasks
 
