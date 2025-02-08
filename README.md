@@ -83,11 +83,11 @@ The framework consists of the following key components:
 1. **T-Cycle:**
 	- **Generation Step:** For each $T \in \mathcal{D}_T$, generate $A^{'} = \text{T2A}(T)$.
 	- **Training Step:** Train A2T on $(T, A^{'})$, reconstructing $T^{'} = \text{A2T}(A^{'})$.
-	- **Loss Function:** $\mathcal{L}_{\phi}(T, T')$ measures reconstruction loss.
+	- **Loss Function:** $\mathcal{L}_{\phi}(T, T')$.
 2. **A-Cycle:**
 	- **Generation Step:** For each $A \in \mathcal{D}_A$, generate $T^{'} = \text{A2T}(A)$.
 	- **Training Step:** Train T2A on $(T^{'}, A)$, reconstructing $A^{'} = \text{T2A}(T^{'})$.
-	- **Loss Function:** $\mathcal{L}_{\theta}(A, A')$ measures extraction loss.
+	- **Loss Function:** $\mathcal{L}_{\theta}(A, A')$.
 
 ### Low-Resource Setting
 ![Low-Ressource setting](images/low_ressource_training.svg)
