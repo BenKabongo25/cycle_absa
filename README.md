@@ -19,7 +19,7 @@ Aspect-Based Sentiment Analysis (ABSA) aims to identify and categorize sentiment
 - **Opinion term:** $\mathcal{O} = {o | o = (o_1, o_2, \dots, o_{|o|})}$ refers to opinion expressions related to aspects.
 - **Sentiment polarity:** $\mathcal{S} = {POS, NEG, NEUT}$ indicates the sentiment polarity (positive, negative, neutral).
 - **Aspect tuple:** $\mathcal{E}$ represents task-dependent tuples combining the above elements.
-- **Aspect annotations:** $A = {A_1, A_2, \cdots } \in \mathcal{P}(\mathcal{E})$
+- **Aspect annotations:** $A = \{A_1, A_2, \cdots \} \in \mathcal{P}(\mathcal{E})$
 
 ### ABSA Tasks
 
@@ -76,6 +76,7 @@ The framework consists of the following key components:
 - **T2A:** $\mathcal{T} \rightarrow \mathcal{P}(\mathcal{E})$ — Extracts aspects from text, parameterized by $\theta$.
 - **A2T:** $\mathcal{P}(\mathcal{E}) \rightarrow \mathcal{T}$ — Generates text from aspect tuples, parameterized by $\phi$.
 - These functions are inverses of each other: $\text{T2A}^{-1} = \text{A2T}$ and $\text{A2T}^{-1} = \text{T2A}$.
+
 ### Cycle Training Process
 ![Cycle ABSA overview](images/cycle_absa.svg)
 
@@ -87,6 +88,7 @@ The framework consists of the following key components:
 	- **Generation Step:** For each $A \in \mathcal{D}_A$, generate $T^{'} = \text{A2T}(A)$.
 	- **Training Step:** Train T2A on $(T^{'}, A)$, reconstructing $A^{'} = \text{T2A}(T^{'})$.
 	- **Loss Function:** $\mathcal{L}_{\theta}(A, A')$ measures extraction loss.
+
 ### Low-Resource Setting
 ![Low-Ressource setting](images/low_ressource_training.svg)
 
@@ -108,6 +110,7 @@ To comprehensively assess the performance of both models, we employ a combinatio
 - **BERT-F1:** Utilizes contextual embeddings to capture semantic similarity beyond surface-level token matching.
 
 By combining these metrics, we ensure robust evaluation across both extraction and generation tasks.
+
 ## 🚀 **Project Structure**
 ```
 cycle_absa/
@@ -133,7 +136,6 @@ cd cycle_absa
 ## 📚 **Usage**
 
 ### 1️⃣ **Train a Model (CycleABSA Example)**
-
 ```bash
 python3 cycle_absa.py \
 --model_name_or_path t5-base \
@@ -163,7 +165,6 @@ python3 cycle_absa.py \
 ```
 
 ### 2️⃣ **Run Full Supervised Baseline**
-
 ```bash
 python3 full_supervised.py \
 --model_name_or_path t5-base \
