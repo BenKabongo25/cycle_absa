@@ -129,8 +129,8 @@ cycle_absa/
 ## ⚙️ **Installation**  
 **Clone the repository:**
 ```bash
-git clone https://github.com/BenKabongo25/cycle_absa.git
-cd cycle_absa
+git clone https://github.com/BenKabongo25/CycleABSA.git
+cd CycleABSA
 ```
 
 ## 📚 **Usage**
